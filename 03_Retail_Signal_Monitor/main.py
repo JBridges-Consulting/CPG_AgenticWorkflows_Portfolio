@@ -38,7 +38,7 @@ def send_email(recipient, buyer_name, content):
         # Build body
         body = f"Hello {buyer_name},\n\nBased on today's shelf scan, we have identified significant revenue leakage in your category. See the full strategic recovery plan below:\n\n{content}{signature}"
         
-        # Character cleaning and UTF-8 encoding (Fixes the ASCII Error)
+        # Fix for the 'ascii' error
         clean_body = body.replace('\xa0', ' ')
         msg.attach(MIMEText(clean_body, 'plain', 'utf-8'))
         
@@ -52,7 +52,7 @@ def send_email(recipient, buyer_name, content):
         st.error(f"Email Error: {e}")
         return False
 
-# --- 3. DATA LOAD ---
+# --- 3. DATA LOAD (MANDATORY SOURCE OF TRUTH) ---
 def load_pricing():
     try:
         url = "https://raw.githubusercontent.com/JBridges-Consulting/CPG_AgenticWorkflows_Portfolio/main/03_Retail_Signal_Monitor/pricing_master_UPSPW.csv"
@@ -69,7 +69,9 @@ df_pricing = load_pricing()
 
 # --- 4. THE INTERFACE ---
 if df_pricing is not None:
+    # Explicitly preparing the context so the AI can read the CSV data
     pricing_context = df_pricing[['product_name', 'list_price', 'weekly_velocity']].to_string(index=False)
+    
     uploaded_file = st.file_uploader("Upload Shelf Scan", type=["jpg", "png"])
 
     if uploaded_file:
@@ -78,7 +80,7 @@ if df_pricing is not None:
             st.image(uploaded_file, caption="Shelf Reality", use_container_width=True)
             if st.button("📈 Run Strategic Analysis"):
                 base64_image = encode_image(uploaded_file)
-                with st.spinner("Calculating Revenue Loss..."):
+                with st.spinner("Calculating Revenue Loss from Master Data..."):
                     response = client.chat.completions.create(
                         model="gpt-4o",
                         temperature=0, 
@@ -88,19 +90,25 @@ if df_pricing is not None:
                                 {
                                     "type": "text", 
                                     "text": f"""
-                                    System: Senior Category Manager. Use ONLY this data: {pricing_context}
+                                    System: Senior Category Manager. 
+                                    MANDATORY DATA SOURCE: Use ONLY this CSV data for pricing and velocity:
+                                    {pricing_context}
                                     
                                     MISSION:
-                                    1. START with a professional 3-sentence summary on category decay and revenue leakage. No header.
-                                    2. Identify exactly 6 empty shelf facings.
-                                    3. TABLE: Columns [Competitor OOS, Replacement SKU, OOS Quantity, Weekly Revenue Loss Calculation, Weekly Revenue Loss].
-                                    4. MATH RULE: Weekly Revenue Loss = (list_price * 7 * weekly_velocity * 1). 
-                                       - Show math in 'Weekly Revenue Loss Calculation' (e.g., $4.49 * 7 * 4 * 1).
+                                    1. START with a professional 3-sentence summary on category leakage. (No header).
+                                    2. Identify exactly 6 empty shelf facings. 
+                                    3. For each OOS item, find the EXACT matching 'product_name' from the CSV provided above.
+                                    4. TABLE: [Competitor OOS, Replacement SKU, OOS Quantity, Weekly Revenue Loss Calculation, Weekly Revenue Loss].
                                     
-                                    5. BUYER PITCH: Write two bolded paragraphs. (No headers). 
-                                       - BOLD the total aggregate revenue loss across all 6 facings.
+                                    MATH RULE: 
+                                    - You MUST use the 'list_price' and 'weekly_velocity' from the CSV for that specific product.
+                                    - Formula: (list_price * 7 * weekly_velocity * 1). 
+                                    - Show the numbers in the 'Weekly Revenue Loss Calculation' column.
+                                    
+                                    5. BUYER PITCH: Write two bolded paragraphs. (No header). 
+                                    - BOLD the total aggregate revenue loss across all 6 facings.
 
-                                    Format: Plain professional text and a Markdown table only.
+                                    Format: Markdown table and plain text. No technical headers.
                                     """
                                 },
                                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}", "detail": "high"}}

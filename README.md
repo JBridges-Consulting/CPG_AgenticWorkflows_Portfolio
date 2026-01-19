@@ -21,7 +21,7 @@ Agent 3: The Retail Signal Monitor
 
 The Problem: "Out-of-Sight, Out-of-Mind." Brands lose millions when products are out-of-stock or mispriced on the shelf.
 The Solution: "I make AI watch the market so humans don't have to." A Vision-AI tool that analyzes shelf photos to detect stock-outs and pricing violations.
-Key Tech: Gemini 1.5 Flash Vision, Multimodal AI, Image Processing.
+Key Tech:  OpenAI GPT-4o, Multimodal AI, Image Processing.
 
 Agent 4: The Autonomous JBP Strategist
 
@@ -34,10 +34,11 @@ Key Tech: Data Synthesis, Predictive Strategy, LLM Orchestration.
 
 Language: Python 3.12 (Optimized for Silicon Mac environments)
 Interface: Streamlit (Custom UX/UI)
-AI Models: Google Gemini 1.5 (Pro & Flash), OpenAI GPT-4o
+AI Models: OpenAI GPT-4o
 Integrations: Google Cloud Platform, SMTP, CSV/Excel Automation
 
 📫 Contact & Collaboration
+
 I am always looking to connect with professionals at the intersection of CPG Leadership and AI Engineering.
 
 Name: Jenica Bridges

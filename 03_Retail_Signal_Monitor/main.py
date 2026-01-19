@@ -33,17 +33,12 @@ def send_email(recipient, buyer_name, content):
         msg['To'] = recipient
         msg['Subject'] = f"Strategic Category Opportunity for {buyer_name}"
         
-        # --- EXACT SIGNATURE ---
         signature = "\n\nJenica\nHarvest Heritage\nNational Account Manager, Grocery"
         
-        # Clean technical headers
-        clean_content = content.replace("**Quantifiable Buyer Pitch:**", "").replace("Quantifiable Buyer Pitch", "")
+        # Build body
+        body = f"Hello {buyer_name},\n\nBased on today's shelf scan, we have identified significant revenue leakage in your category. See the full strategic recovery plan below:\n\n{content}{signature}"
         
-        # Build final body
-        body = f"Hello {buyer_name},\n\nBased on today's shelf scan, we have identified significant revenue leakage in your category. See the full strategic recovery plan below:\n\n{clean_content}{signature}"
-        
-        # --- ENCODING FIX ---
-        # Clean 'ghost' characters and force universal UTF-8
+        # Character cleaning and UTF-8 encoding (Fixes the ASCII Error)
         clean_body = body.replace('\xa0', ' ')
         msg.attach(MIMEText(clean_body, 'plain', 'utf-8'))
         
@@ -96,16 +91,16 @@ if df_pricing is not None:
                                     System: Senior Category Manager. Use ONLY this data: {pricing_context}
                                     
                                     MISSION:
-                                    1. START with a 3-sentence summary on category decay. (DO NOT use headers).
-                                    2. VISIBILITY SCAN: Identify exactly 6 empty shelf facings.
+                                    1. START with a professional 3-sentence summary on category decay and revenue leakage. No header.
+                                    2. Identify exactly 6 empty shelf facings.
                                     3. TABLE: Columns [Competitor OOS, Replacement SKU, OOS Quantity, Weekly Revenue Loss Calculation, Weekly Revenue Loss].
                                     4. MATH RULE: Weekly Revenue Loss = (list_price * 7 * weekly_velocity * 1). 
-                                       - You MUST show the math in 'Weekly Revenue Loss Calculation' (e.g., $4.49 * 7 * 4 * 1).
+                                       - Show math in 'Weekly Revenue Loss Calculation' (e.g., $4.49 * 7 * 4 * 1).
                                     
-                                    5. BUYER PITCH: Write two bolded paragraphs. (DO NOT use headers).
+                                    5. BUYER PITCH: Write two bolded paragraphs. (No headers). 
                                        - BOLD the total aggregate revenue loss across all 6 facings.
 
-                                    Format: Plain professional text and a Markdown table.
+                                    Format: Plain professional text and a Markdown table only.
                                     """
                                 },
                                 {"type": "image_url", "image_url": {"url": f"data:image/jpeg;base64,{base64_image}", "detail": "high"}}

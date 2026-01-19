@@ -53,7 +53,6 @@ def send_email(recipient, buyer_name, content):
         return False
 
 # --- 3. DATA LOAD (MANDATORY SOURCE OF TRUTH) ---
-# --- 3. DATA LOAD (MANDATORY SOURCE OF TRUTH) ---
 def load_pricing():
     try:
         # RAW GitHub URL for cloud reliability

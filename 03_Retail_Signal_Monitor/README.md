@@ -1,18 +1,28 @@
-# Heritage Harvest | Field Intelligence ROI Engine 🥔
+# Heritage Harvest | Field Intelligence & Revenue Recovery 🥔
 
-A strategic retail intelligence tool designed for National Account Managers to convert competitor shelf voids into Heritage Harvest revenue.
+An AI-powered category management engine designed to convert visual shelf audits into national revenue recovery strategies. This tool quantifies out-of-stock (OOS) leakage across a 1,200-store retail footprint using real-time computer vision and proprietary pricing data.
 
-## 🚀 Overview
-This application uses **GPT-4o Vision** to perform a real-time category visibility scan. It identifies competitor out-of-stocks (OOS), maps them to Heritage Harvest SKUs, and calculates the weekly revenue loss based on master pricing data.
+## 🛡️ Executive Revenue Recovery Blueprint
+The core of this application is **Agent 3**, a Strategic Signal Monitor that identifies:
+* **Competitive Gaps:** Pinpoints exactly where competitors are failing to maintain shelf stock.
+* **Overskewed Analysis:** Analyzes shelf facings to identify slow-moving competitor SKUs that should be rationalized to make room for high-velocity Heritage Harvest products.
+* **National Impact Math:** Automatically scales store-level voids to a 1,200-store chain-wide financial impact.
 
-## 🛠️ Key Features
-* **Visual Signal Monitoring:** Detects shelf gaps and identifies competitor failures.
-* **Master Data Integration:** Pulls exact `list_price` and `weekly_velocity` from `pricing_master_UPSPW.csv`.
-* **Quantifiable Buyer Pitch:** Generates a data-driven "Challenger Sale" pitch for retailers.
-* **Automated Delivery:** Sends a personalized Executive Summary directly to the Category Buyer.
+## 🚀 Key Features
+* **Multi-Retailer Interface:** Dynamic environment selection for Retailer A, B, and C to provide bespoke reporting.
+* **Computer Vision Integration:** Powered by GPT-4o for high-fidelity visual analysis of shelf conditions.
+* **Financial Precision:** Integrates a local `pricing_master_UPSPW.csv` to ensure 100% accuracy in SKU pricing and velocity calculations.
+* **Strategic Profit Recovery:** Generates an executive-ready summary focused on shelf optimization and immediate revenue capture.
 
-## 📦 Setup
-1. Clone this repository.
-2. Ensure `pricing_master_UPSPW.csv` is in the root directory.
-3. Add your `OPENAI_API_KEY` and SMTP email credentials to `.streamlit/secrets.toml`.
-4. Run locally: `streamlit run app.py`
+## 🛠️ Setup & Installation
+1. **Clone the Repo:**
+   ```bash
+   git clone [https://github.com/JBridges-Consulting/Retail_Signal_Monitor.git](https://github.com/JBridges-Consulting/Retail_Signal_Monitor.git)
+Configure Secrets: Add your OPENAI_API_KEY to the Streamlit Cloud Secrets dashboard or .streamlit/secrets.toml.Data Dependency: Ensure pricing_master_UPSPW.csv is present in the root directory for accurate revenue modeling.
+📊 Commercial Impact LogicThe tool utilizes the following proprietary formula to quantify chain-wide opportunity:$$Total Weekly Chain Opportunity = \sum (List Price \times Weekly Velocity \times #of Stores)$$Developed for the Heritage Harvest National Account Team.
+
+### **How to Update on GitHub:**
+1. Go to your repository on GitHub.com.
+2. Click on the **README.md** file.
+3. Click the **pencil icon (edit)**.
+4. Paste the code above and click **Commit changes**.

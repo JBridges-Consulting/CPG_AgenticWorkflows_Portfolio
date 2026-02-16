@@ -1,50 +1,78 @@
-CPG Agentic Workflows Portfolio
+# Deduction Detective
 
-Bridging Retail Strategy and Autonomous AI
-This portfolio demonstrates a multi-agent ecosystem designed to automate the lifecycle of a CPG product—from internal knowledge management to retail shelf execution. Each agent is built to solve a specific business problem: Data Silos, Financial Leakage, and Market Blind Spots.
+3-layer LangGraph agent that audits deduction claims (Ingest → Audit Logic → Human Gate → Action) using GPT-4o and `interrupt_before` for human review.
 
-🤖 The Four Agents
+## Setup
 
-Agent 1: The CPG Knowledge Concierge 
+1. **Create a virtual environment (recommended):**
+   ```bash
+   cd 05_Deductions_Detector
+   python -m venv .venv
+   source .venv/bin/activate   # Windows: .venv\Scripts\activate
+   ```
 
-The Problem: Sales teams waste hours searching through 100+ page distributor manuals and trade policy PDFs.
-The Solution: A RAG-powered (Retrieval-Augmented Generation) assistant that provides instant, cited answers to complex operational questions.
-Key Tech: PDF Parsing, Vector Embeddings, Semantic Search.
+2. **Install dependencies:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-Agent 2: The Trade Spend & Margin Auditor
+3. **Configure environment:**
+   - Ensure `.env` exists with `OPENAI_API_KEY=your-key`.
+   - Or export: `export OPENAI_API_KEY=your-key`
 
-The Problem: "Price gaps" and incorrect trade spend entries can erode margins by 5-10% before they are even noticed.
-The Solution: An automated financial auditor that syncs with Google Sheets to verify SKU-level margins against a strict 50% "Safety Floor."
-Key Tech: Google Sheets API, Financial Logic Engines, Automated Email (SMTP) alerts.
+## How to Run the First Audit
 
-Agent 3: The Retail Signal Monitor
+From the project root (or from `05_Deductions_Detector` if you have a run script there):
 
-The Problem: "Out-of-Sight, Out-of-Mind." Brands lose millions when products are out-of-stock or mispriced on the shelf.
-The Solution: "I make AI watch the market so humans don't have to." A Vision-AI tool that analyzes shelf photos to detect stock-outs and pricing violations.
-Key Tech:  OpenAI GPT-4o, Multimodal AI, Image Processing.
+```bash
+cd 05_Deductions_Detector
+python main.py
+```
 
-🛠️ Technical Stack
+### What Happens
 
-Language: Python 3.12 (Optimized for Silicon Mac environments)
-Interface: Streamlit (Custom UX/UI)
-AI Models: OpenAI GPT-4o
-Integrations: Google Cloud Platform, SMTP, CSV/Excel Automation
+1. **Ingest (Node A)**  
+   Simulates ingesting a $5,000 Walmart claim for "Late Delivery" and sets `contract_text` (48-hour grace period).
 
-📫 Contact & Collaboration
+2. **Audit Logic (Node B)**  
+   GPT-4o compares the claim to the rule: *"Shipments have a 48-hour grace period."*  
+   The claim is 12 hours late → within grace → **violation_found = False** and `evidence` is set.
 
-I am always looking to connect with professionals at the intersection of CPG Leadership and AI Engineering.
+3. **Human Gate (Node C)**  
+   Execution **pauses before** this node (`interrupt_before=["human_gate"]`).  
+   You see the state (claim_id, retailer, amount, violation_found, evidence).  
+   The script then **resumes** with `human_approved: True`.
 
-Name: Jenica Bridges
-Role: CPG AI Strategy & Agentic Workflow Architect
-Email: jbridges@jbridgesconsulting.com
-LinkedIn: https://www.linkedin.com/in/jenica-bridges-07900314/
+4. **Action (Node D)**  
+   If `human_approved` is True, it prints **"Dispute Filed Successfully"**.
 
-“The future of CPG isn't just big data; it's big agility. Let’s build it together.”
+### Running Step-by-Step (e.g. in a REPL)
 
-How to Navigate This Portfolio
-Each folder contains its own app.py/main.py and .venv setup.
+To run the graph manually and resume after human review:
 
-01_Knowledge_Concierge/
-02_Trade_Spend_Auditor/
-03_Retail_Signal_Monitor/
-04_JBP_Strategist/
+```python
+from main import build_graph
+
+graph = build_graph()
+config = {"configurable": {"thread_id": "my-audit-1"}}
+
+# Run until pause before human_gate
+result = graph.invoke({}, config=config)
+print(result)  # review state here
+
+# Resume with human decision
+final = graph.invoke({"human_approved": True}, config=config)
+```
+
+## Files
+
+| File           | Purpose |
+|----------------|--------|
+| `schema.py`    | `DeductionState` TypedDict (claim_id, retailer, amount, contract_text, violation_found, evidence, human_approved). |
+| `main.py`      | Graph definition, nodes (ingest, audit, human_gate, action), `MemorySaver` checkpointer, and `run_first_audit()`. |
+| `requirements.txt` | Dependencies (langgraph, langchain-openai, langchain-core, python-dotenv). |
+
+## Technical Notes
+
+- **Persistence:** `MemorySaver()` is used for checkpointing; state is in-memory and lost when the process exits (use a DB-backed checkpointer for production).
+- **Human gate:** `interrupt_before=["human_gate"]` pauses before the human_gate node; resume with the same `thread_id` and pass `human_approved` in the invoke payload (or use `update_state` if your LangGraph version supports it).

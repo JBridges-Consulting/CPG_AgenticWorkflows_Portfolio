@@ -1,5 +1,0 @@
-claim_id,amount,reason_code,contract_text
-CLM-WMT-001,45.50,14,"Clause: Shipments have a 48-hour grace period for shortage claims."
-CLM-WMT-002,125.00,22,"Clause: Shipments have a 48-hour grace period for shortage claims."
-CLM-WMT-999,5200.00,10,"Clause: Pricing agreements must be honored within 24 hours of PO issue."
-CLM-WMT-104,310.00,14,"Clause: Shipments have a 48-hour grace period for shortage claims."
